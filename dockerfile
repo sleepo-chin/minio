@@ -22,6 +22,7 @@ RUN echo "LC_ALL=en_US.UTF-8" >> /etc/default/locale
 RUN echo "LC_TYPE=en_US.UTF-8" >> /etc/default/locale
 RUN locale-gen en_US en_US.UTF-8
 
+USER mino-test
 RUN wget https://dl.min.io/server/minio/release/linux-amd64/minio \
     && chmod +x minio\
     && ./minio server /data
