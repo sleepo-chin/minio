@@ -17,12 +17,18 @@ RUN apt-get update \
     wget \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN echo "LANGUAGE=en_US.UTF-8" >> /etc/default/locale
-RUN echo "LC_ALL=en_US.UTF-8" >> /etc/default/locale
-RUN echo "LC_TYPE=en_US.UTF-8" >> /etc/default/locale
-RUN locale-gen en_US en_US.UTF-8
-
-USER mino-test
 RUN wget https://dl.min.io/server/minio/release/linux-amd64/minio \
-    && chmod +x minio\
-    && ./minio server /data
+    && chmod +x minio
+
+RUN mv minio /usr/local/bin/minio \ 
+   && useradd -r minio-user -s /sbin/nologin \
+   && chown minio-user:minio-user /usr/local/bin/minio \
+   && mkdir /usr/local/share/minio \
+   && chown minio-user:minio-user /usr/local/share/minio
+
+USER minio-user
+EXPOSE 9000
+ENTRYPOINT [ "/usr/local/bin/minio" ]
+VOLUME [ "/data" ]
+CMD [ "minio","server","/data" ]
+
